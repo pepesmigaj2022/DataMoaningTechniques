@@ -47,11 +47,6 @@ def feature_var_mood(id, df):
     record_type = 'mood'
     op = np.var
     return feature_general_op(id, record_type, op, df)
-    
-def feature_apps_time(id, df):
-    record_type = 'app'
-    op = np.sum
-    return feature_general_op(id, record_type, op, df)
 
 def feature_screen_time(id, df):
     record_type = 'screen'
@@ -93,42 +88,97 @@ def feature_gaming(id, df):
     op = np.sum
     return feature_general_op(id, record_type, op, df, record_detail=record_detail)
 
+def feature_activity(id, df):
+    record_type = 'activity'
+    op = np.sum
+    return feature_general_op(id, record_type, op, df)
+
+def feature_avg_valence(id, df):
+    record_type = 'sensor'
+    record_detail = 'valence'
+    op = np.mean
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
+
+def feature_var_valence(id, df):
+    record_type = 'sensor'
+    record_detail = 'valence'
+    op = np.var
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
+
+def feature_office_app(id, df):
+    record_type = 'app'
+    record_detail = 'office'
+    op = np.sum
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
+
+def feature_travel_app(id, df):
+    record_type = 'app'
+    record_detail = 'travel'
+    op = np.sum
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
+
+def feature_entertainment_app(id, df):
+    record_type = 'app'
+    record_detail = 'entertainment'
+    op = np.sum
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
+
+def feature_communication_app(id, df):
+    record_type = 'app'
+    record_detail = 'communication'
+    op = np.sum
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
+
+def feature_social_app(id, df):
+    record_type = 'app'
+    record_detail = 'social'
+    op = np.sum
+    return feature_general_op(id, record_type, op, df, record_detail=record_detail)
 
 ####################################################################################
 # DATAFRAME PER PERSON PER DAY                                                     #
 ####################################################################################
 
-features = [feature_avg_mood, feature_var_mood, feature_screen_time, feature_apps_time, 
-                feature_avg_arousal, feature_var_arousal, feature_social_contact, feature_gaming]
+features = [feature_avg_mood, feature_var_mood, feature_screen_time, 
+                feature_avg_arousal, feature_var_arousal, feature_social_contact, feature_gaming, 
+                feature_activity, feature_avg_valence, feature_var_valence, feature_office_app, 
+                feature_travel_app, feature_entertainment_app, feature_communication_app, feature_social_app]
 # have to update when creating more features
 
 def create_df(id, df):
-    feature0 = features[0]
+    result_feature0 = features[0](id, df)
     dfs = pd.DataFrame({
-        'date' : feature0(id, df)[0],
-        f'{feature0}'.split()[1] : feature0(id, df)[1],
+        'date' : result_feature0[0],
+        f'{features[0]}'.split()[1] : result_feature0[1],
     })
 
     for feature in features[1:]:
+        result_feature = feature(id, df)
         df_new = pd.DataFrame({
-            'date' : feature(id, df)[0],
-            f'{feature}'.split()[1] : feature(id, df)[1]
+            'date' : result_feature[0],
+            f'{feature}'.split()[1] : result_feature[1]
         })
         dfs = pd.merge(dfs, df_new, on='date', how='outer')
         if dfs.empty:
             return
-        dfs.to_csv(f'features/output{id}.csv')
+        dfs.to_csv(f'features/output{id}.csv', mode='w', index=False)
+
 
 
 ####################################################################################
 ####################################################################################
 
 if __name__ == "__main__":
-    
+
     file = "dataset_clean.csv"
     dataset_clean = pd.read_csv(file)
     num_people = max(dataset_clean['id'])
 
     for i in range(num_people):
         create_df(i+1, dataset_clean)
+
+    
+    
+
+
 
