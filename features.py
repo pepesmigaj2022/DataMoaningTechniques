@@ -98,14 +98,15 @@ def feature_gaming(id, df):
 # DATAFRAME PER PERSON PER DAY                                                     #
 ####################################################################################
 
-def create_df(id, df):
-    # have to update when creating more features
-    features = [feature_avg_mood, feature_var_mood, feature_screen_time, feature_apps_time, 
+features = [feature_avg_mood, feature_var_mood, feature_screen_time, feature_apps_time, 
                 feature_avg_arousal, feature_var_arousal, feature_social_contact, feature_gaming]
+# have to update when creating more features
+
+def create_df(id, df):
     feature0 = features[0]
     dfs = pd.DataFrame({
         'date' : feature0(id, df)[0],
-        f'{feature0}'.split()[1] : feature0(id, df)[1]
+        f'{feature0}'.split()[1] : feature0(id, df)[1],
     })
 
     for feature in features[1:]:
@@ -122,12 +123,12 @@ def create_df(id, df):
 ####################################################################################
 ####################################################################################
 
+if __name__ == "__main__":
+    
+    file = "dataset_clean.csv"
+    dataset_clean = pd.read_csv(file)
+    num_people = max(dataset_clean['id'])
 
-file = "dataset_clean.csv"
-dataset_clean = pd.read_csv(file)
-num_people = max(dataset_clean['id'])
-
-for i in range(num_people+1):
-    create_df(i+1, dataset_clean)
-
+    for i in range(num_people+1):
+        create_df(i+1, dataset_clean)
 
