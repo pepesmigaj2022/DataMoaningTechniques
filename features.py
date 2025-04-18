@@ -129,6 +129,6 @@ if __name__ == "__main__":
     dataset_clean = pd.read_csv(file)
     num_people = max(dataset_clean['id'])
 
-    for i in range(num_people+1):
+    for i in range(num_people):
         create_df(i+1, dataset_clean)
 
