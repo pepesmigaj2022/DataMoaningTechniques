@@ -135,14 +135,42 @@ def feature_social_app(id, df):
     op = np.sum
     return feature_general_op(id, record_type, op, df, record_detail=record_detail)
 
+def feature_day_week(id, df):
+    def map_day(day):
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        for i in range(len(days)):
+            if days[i] == day:
+                return i
+            
+    filtered_df = df[(df['id'] == id)]
+
+    vals = [filtered_df['date'].values, filtered_df['day_of_the_week'].values]
+    result_vals = [map_day(vals[1][0])]
+    dates = []
+    date_helper = vals[0][0][:10]
+    for i in range(1,len(vals[0])):
+        current_date = vals[0][i][:10]
+        if date_helper != current_date:
+            dates.append(date_helper)
+            date_helper = current_date
+            result_vals.append(map_day(vals[1][i]))
+        else:
+            continue
+    dates.append(date_helper)
+    return [dates, result_vals]
+
+    
+
 ####################################################################################
 # DATAFRAME PER PERSON PER DAY                                                     #
 ####################################################################################
 
+
 features = [feature_avg_mood, feature_var_mood, feature_screen_time, 
                 feature_avg_arousal, feature_var_arousal, feature_social_contact, feature_gaming, 
                 feature_activity, feature_avg_valence, feature_var_valence, feature_office_app, 
-                feature_travel_app, feature_entertainment_app, feature_communication_app, feature_social_app]
+                feature_travel_app, feature_entertainment_app, feature_communication_app,
+                feature_social_app, feature_day_week]
 # have to update when creating more features
 
 def create_df(id, df):
@@ -179,6 +207,8 @@ if __name__ == "__main__":
 
     
     
+
+
 
 
 
