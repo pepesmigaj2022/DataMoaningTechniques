@@ -187,6 +187,7 @@ def create_df(id, df):
             f'{feature}'.split()[1] : result_feature[1]
         })
         dfs = pd.merge(dfs, df_new, on='date', how='outer')
+        dfs = dfs.drop_duplicates()
         if dfs.empty:
             return
         dfs.to_csv(f'features/output{id}.csv', mode='w', index=False)
